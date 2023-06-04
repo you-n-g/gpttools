@@ -1,8 +1,8 @@
 """Settings Module."""
 import logging
 from logging import getLevelName
-from typing import Optional
 from pathlib import Path
+from typing import Optional
 
 from pydantic import BaseSettings
 
@@ -23,6 +23,7 @@ class GlobalSettings(BaseSettings):
 
     ci: bool = False
 
+
 class OpenAI(BaseSettings):
     """System level settings."""
 
@@ -31,7 +32,6 @@ class OpenAI(BaseSettings):
     temperature: float = 0.9  # TODO: it is not being used.
     model: str = "gpt-35-turbo"
     max_tokens: int = 800
-    # use_azure: bool = True
 
     api_type: str = "azure"
     api_version: str = "2023-03-15-preview"
@@ -55,4 +55,3 @@ global_settings = GlobalSettings(_env_file=_env_file)
 
 OPENAI_SETTINGS = OpenAI(_env_file=_env_file)
 
-# print(OPENAI_SETTINGS)

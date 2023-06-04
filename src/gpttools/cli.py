@@ -1,9 +1,11 @@
 """Command Line Interface."""
-from pathlib import Path
 import re
+from pathlib import Path
+
 import typer
-from gpttools.llm import APIBackend
 from tqdm.auto import tqdm
+
+from gpttools.llm import APIBackend
 
 app = typer.Typer()
 
@@ -17,7 +19,7 @@ def run() -> None:
 def tex_convert() -> None:
     print("Converting tex: you can use following command to convert it to text first")
     print(
-        'docker run --rm --volume "`pwd`:/data" --user `id -u`:`id -g` pandoc/latex:2.6 <all things after pandoc command, e.g.  "-s example4.tex -o example5.md">'
+        'docker run --rm --volume "`pwd`:/data" --user `id -u`:`id -g` pandoc/latex:2.6 <all things after pandoc command, e.g.  "-s example4.tex -o example5.md">',
     )
     print("pdftotext input.pdf output.txt")
     print("sudo apt-get install texlive-extra-utils && detex input.tex > output.txt")
@@ -110,7 +112,6 @@ def post_process(path: str):
             start = True
         if start and keep_line(line):
             print(line.strip())
-    return
 
 
 @app.command()
@@ -128,7 +129,8 @@ def fix_grammar(path: str, start: int = 0):
                 p.unlink()
 
     for i, line in tqdm(list(enumerate(lines))):
-        if i < start: continue
+        if i < start:
+            continue
         system_prompt = """
 Act as a language expert, proofread my paper on the above content while putting a focus on grammar and punctuation. Just output the corrected content. Don't give any explanation. Please keep the markdown format.
 
@@ -139,10 +141,14 @@ I is a pig.
 Example output:
 I am a pig.
 """
-        user_prompt = """content: 
-{context}""".format(context=line.strip())
+        user_prompt = """content:
+{context}""".format(
+            context=line.strip(),
+        )
         print(user_prompt)
-        response = ab.build_messages_and_create_chat_completion(user_prompt, system_prompt)
+        response = ab.build_messages_and_create_chat_completion(
+            user_prompt, system_prompt,
+        )
         print(f"{response}")
 
         with new_path.open("a") as f:
