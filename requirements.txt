@@ -1,3 +1,5 @@
 # Requirements for runtime.
 pydantic
 typer[all]
+openai
+tqdm
