@@ -113,6 +113,8 @@ def post_process(path: str):
         if start and keep_line(line):
             print(line.strip())
 
+def _fix_cases(text):
+    return re.sub(r" +", r" ", text).strip()
 
 @app.command()
 def fix_grammar(path: str, start: int = 0):
@@ -129,29 +131,37 @@ def fix_grammar(path: str, start: int = 0):
                 p.unlink()
 
     for i, line in tqdm(list(enumerate(lines))):
+        line = _fix_cases(line)
         if i < start:
             continue
         system_prompt = """
-Act as a language expert, proofread my paper on the above content while putting a focus on grammar and punctuation. Just output the corrected content. Don't give any explanation. Please keep the markdown format.
+Act as a language expert, proofread my paper on the above content while putting a focus on grammar and punctuation. Just output the corrected content. Don't give any explanation. Please keep the markdown and latex format.
 
 Example input:
 Content:
+```
 I is a pig.
+```
 
 Example output:
 I am a pig.
 """
-        user_prompt = """content:
-{context}""".format(
-            context=line.strip(),
+        user_prompt = """Content:
+```
+{context}
+```""".format(
+            context=line,
         )
         print(user_prompt)
         response = ab.build_messages_and_create_chat_completion(
-            user_prompt, system_prompt,
+            user_prompt,
+            system_prompt,
         )
         print(f"{response}")
 
         with new_path.open("a") as f:
+            if response.startswith("Corrected content:"):
+                response = response.replace("Corrected content:", "")
             f.write(f"--- Line {i}: ---\n")
             f.write(response + "\n")
 
@@ -159,6 +169,12 @@ I am a pig.
             f.write(f"--- Line {i}: ---\n")
             f.write(line.strip() + "\n")
 
+@app.command()
+def run_all():
+    print("detex sample-authordraft.tex > sample-authordraft.detex.txt")
+    print("gpttools-cli post-process sample-authordraft.detex.txt > sample-authordraft.detex.processed.txt")
+    print("gpttools-cli fix-grammar sample-authordraft.detex.processed.txt")
+    print("vim -d sample-authordraft.detex.processed.out.txt sample-authordraft.detex.processed.algin.txt")
 
 typer_click_object = typer.main.get_command(app)
 

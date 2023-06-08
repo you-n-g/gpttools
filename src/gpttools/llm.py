@@ -21,7 +21,9 @@ class APIBackend:
             openai.api_version = OPENAI_SETTINGS.api_version
 
     def build_messages_and_create_chat_completion(
-        self, user_prompt, system_prompt=None,
+        self,
+        user_prompt,
+        system_prompt=None,
     ):
         """Build the messages to avoid implementing several redundant lines of code."""
         # TODO: system prompt should always be provided. In development stage we can use default value

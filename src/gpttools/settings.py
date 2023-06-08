@@ -54,4 +54,3 @@ settings = Settings(_env_file=_env_file)
 global_settings = GlobalSettings(_env_file=_env_file)
 
 OPENAI_SETTINGS = OpenAI(_env_file=_env_file)
-
