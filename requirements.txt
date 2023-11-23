@@ -1,5 +1,6 @@
 openai
 # Requirements for runtime.
 pydantic
+pydantic-settings
 tqdm
 typer[all]

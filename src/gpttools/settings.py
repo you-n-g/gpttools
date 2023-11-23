@@ -4,7 +4,7 @@ from logging import getLevelName
 from pathlib import Path
 from typing import Optional
 
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -30,9 +30,9 @@ class OpenAI(BaseSettings):
     max_retry: int = 120
     retry_sleep: int = 5
     temperature: float = 0.9  # TODO: it is not being used.
-    model: str = "gpt-35-turbo"
     max_tokens: int = 800
 
+    api_model: str = "gpt-35-turbo"
     api_type: str = "azure"
     api_version: str = "2023-03-15-preview"
     api_key: str = None
